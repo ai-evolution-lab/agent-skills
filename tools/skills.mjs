@@ -124,6 +124,20 @@ function cmdInit() {
   ok(`平台: ${OS_TAG}   命令: skills list|add|remove|sync|push|doctor|dashboard`);
 }
 
+// 目录搬移：rename 优先，EPERM 降级（Windows 上目录常被句柄占用拒 rename）
+function moveDir(from, to) {
+  try { fs.renameSync(from, to); return; }
+  catch (e) {
+    if (e.code !== 'EPERM' && e.code !== 'EXDEV' && e.code !== 'EACCES') throw e;
+    if (OS === 'win32') {
+      const r = spawnSync('robocopy', [from, to, '/E', '/MOVE', '/NFL', '/NDL', '/NJH', '/NJS', '/NP'], { encoding: 'utf8' });
+      if (r.status <= 7 && fs.existsSync(to)) { try { fs.rmSync(from, { recursive: true, force: true }); } catch { /* robocopy 已带走 */ } return; }
+    }
+    fs.cpSync(from, to, { recursive: true });
+    fs.rmSync(from, { recursive: true, force: true });
+  }
+}
+
 function cmdAdd(names) {
   const lock = readLock();
   if (names.includes('--all')) names = allSkills().map((s) => s.name);
@@ -142,7 +156,7 @@ function cmdAdd(names) {
         else if (st.isDirectory()) {                                                // 真实目录 → 备份后接管
           fs.mkdirSync(BAK, { recursive: true });
           const to = J(BAK, `${n}-${Date.now()}`);
-          fs.renameSync(p, to); warn(`${p} 是真实目录，已移入 ${to}`);
+          moveDir(p, to); warn(`${p} 是真实目录，已移入 ${to}`);
         } else { fs.unlinkSync(p); }
       }
       try {
@@ -326,6 +340,7 @@ function cmdDashboard(opts) {
     const u = new URL(req.url, 'http://127.0.0.1');
     const authed = u.searchParams.get('t') === token || req.headers['x-skill-token'] === token;
     const send = (code, type, body) => { res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' }); res.end(body); };
+    if (u.pathname === '/favicon.ico') return send(204, 'text/plain', '');
     if (u.pathname === '/' ) {
       if (!authed) return send(403, 'text/plain', 'missing token');
       const boot = JSON.stringify({ token, state: buildState(), mode: 'local' });
