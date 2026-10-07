@@ -1,0 +1,24 @@
+{
+  "_comment": "translate-to-word 最小示例：4 种最常用的条目类型。完整类型见 scripts/content.example.json。",
+  "items": [
+    { "t": "title", "en": "Shipping Faster With Caching", "zh": "用缓存把发布速度提上来" },
+
+    { "t": "p",
+      "en": "Prompt caching lets a model reuse the computation it already did for a shared prefix, which cuts both latency and cost.",
+      "zh": "提示词缓存让模型复用它在共享前缀上已经做过的计算，从而同时降低延迟和成本。" },
+
+    { "t": "h2", "en": "What changes for you", "zh": "对你来说有什么变化" },
+
+    { "t": "bullets",
+      "en": ["Cheaper long prompts.", "Lower time to first token.", "No code change needed."],
+      "zh": ["长提示词更便宜。", "首字延迟更低。", "无需改动代码。"] },
+
+    { "t": "quote",
+      "en": ["Cache writes cost a little more; cache reads cost a lot less."],
+      "zh": ["写入缓存略贵一点，读取缓存便宜很多。"] },
+
+    { "t": "note",
+      "en": "Prices are per 1 million tokens.",
+      "zh": "价格按每百万 token 计。" }
+  ]
+}

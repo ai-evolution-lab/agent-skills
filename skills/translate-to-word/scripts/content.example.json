@@ -1,0 +1,41 @@
+{
+  "_comment": "translate-to-word content schema. Replace with your article. Order = document order. Every prose item emits EN first, then ZH.",
+
+  "items": [
+    { "t": "title",    "en": "Introducing GPT-6 Sol and Luna", "zh": "推出 GPT-6 Sol 与 Luna" },
+    { "t": "subtitle", "en": "More ways to bring frontier intelligence into the work you do every day.", "zh": "把前沿智能带进你日常工作的更多方式。" },
+
+    { "t": "image", "file": "hero.png", "widthIn": 6.2, "enCaption": "", "zhCaption": "" },
+
+    { "t": "meta", "en": "Source: https://example.com/article", "zh": "来源：https://example.com/article" },
+
+    { "t": "p", "en": "First body paragraph in English.", "zh": "正文第一段的中文翻译。" },
+    { "t": "p", "en": "Second body paragraph in English.", "zh": "正文第二段的中文翻译。" },
+
+    { "t": "h2", "en": "GPT-6 API pricing", "zh": "GPT-6 API 定价" },
+
+    { "t": "table",
+      "headers": ["Model / 模型", "Input / 输入", "Output / 输出"],
+      "rows": [
+        ["GPT-5.6 Sol → GPT-6 Sol", "$4 → $2", "$20 → $10"],
+        ["GPT-5.6 Luna → GPT-6 Luna", "$0.20 → $0.10", "$1.20 → $0.50"]
+      ]
+    },
+
+    { "t": "h3", "en": "Professional work", "zh": "专业工作" },
+
+    { "t": "image", "file": "chart-0.png", "widthIn": 6.2, "enCaption": "Figure 1. AutomationBench — score vs. cost per task.", "zhCaption": "图 1. AutomationBench——得分与每任务成本。" },
+
+    { "t": "note", "en": "Footnote or evaluation caveat in English.", "zh": "脚注或评测说明的中文翻译。" },
+
+    { "t": "bullets",
+      "en": ["First bullet in English.", "Second bullet in English."],
+      "zh": ["第一条中文。", "第二条中文。"]
+    },
+
+    { "t": "quote",
+      "en": ["A quoted prompt, reply, or blockquote.", "A second paragraph of the same quote."],
+      "zh": ["引用内容的中文翻译。", "同一段引用的第二段中文。"]
+    }
+  ]
+}

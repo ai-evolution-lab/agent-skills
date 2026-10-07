@@ -1,0 +1,4 @@
+interface:
+  display_name: "Summary"
+  short_description: "总结帖子、网页、文件和音视频，默认只总结不发送；要发送时用 summary-to-feishu"
+  default_prompt: "使用 $summary 总结这个链接、帖子、文件或音视频，产出详细的 10 段结构化总结；默认不发送飞书，如用户要求发送请改用 summary-to-feishu。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Summary to Feishu"
+  short_description: "把来源详细总结并做成飞书文档发到群（端到端）"
+  default_prompt: "使用 $summary-to-feishu 把这份来源做详细总结，并做成飞书文档发送到配置的群。"

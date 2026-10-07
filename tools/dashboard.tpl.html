@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skills 控制台 · agent-skills</title>
+<style>
+  :root { --bg:#0f1115; --card:#171a21; --line:#2a2f3a; --tx:#e6e8ee; --dim:#8b93a7; --acc:#4f8cff; --ok:#38c97c; --warn:#e8b13c; --bad:#ef5d5d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--tx); font:15px/1.6 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+  header { display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:18px 24px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:5; }
+  h1 { font-size:19px; margin:0; }
+  #repoInfo { color:var(--dim); font-size:13px; flex:1; }
+  button { background:var(--card); border:1px solid var(--line); color:var(--tx); border-radius:8px; padding:7px 14px; font-size:13px; cursor:pointer; }
+  button:hover { border-color:var(--acc); }
+  button.primary { background:var(--acc); border-color:var(--acc); color:#fff; }
+  button:disabled { opacity:.4; cursor:default; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:8px; padding:12px 24px 4px; align-items:center; }
+  .toolbar input { flex:1; min-width:180px; background:var(--card); border:1px solid var(--line); border-radius:8px; color:var(--tx); padding:8px 12px; font-size:14px; }
+  .chip { padding:5px 12px; border-radius:99px; font-size:13px; border:1px solid var(--line); background:var(--card); cursor:pointer; color:var(--dim); }
+  .chip.on { color:#fff; background:var(--acc); border-color:var(--acc); }
+  #banner { margin:10px 24px 0; padding:10px 14px; border:1px dashed var(--warn); border-radius:10px; color:var(--warn); font-size:13px; display:none; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px; padding:16px 24px 90px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:8px; }
+  .card.sel { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); }
+  .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .name { font-weight:700; font-size:15px; }
+  .badge { font-size:12px; padding:2px 9px; border-radius:99px; }
+  .b-ok { background:#123726; color:var(--ok); } .b-no { background:#2b2417; color:var(--warn); }
+  .b-na { background:#2c1a1c; color:var(--bad); } .b-fix { background:#22303f; color:#6ea8ff; }
+  .plat { font-size:11px; color:var(--dim); border:1px solid var(--line); border-radius:5px; padding:0 6px; }
+  .plat.hit { color:var(--tx); border-color:var(--acc); }
+  .desc { font-size:13px; color:var(--dim); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .desc.open { -webkit-line-clamp:unset; }
+  ul.does { margin:0; padding-left:18px; font-size:13px; }
+  .bound { font-size:12px; color:var(--warn); background:#241d10; border-radius:8px; padding:6px 10px; }
+  .foot { margin-top:auto; display:flex; gap:8px; align-items:center; }
+  .foot .sp { flex:1; }
+  input[type=checkbox] { width:17px; height:17px; accent-color:var(--acc); cursor:pointer; }
+  #batchbar { position:fixed; bottom:0; left:0; right:0; background:#161922ee; border-top:1px solid var(--line); padding:10px 24px; display:none; gap:10px; align-items:center; z-index:9; backdrop-filter:blur(6px); }
+  #log { margin:0 24px 24px; }
+  #log summary { cursor:pointer; color:var(--dim); font-size:13px; }
+  #log pre { background:#0a0c10; border:1px solid var(--line); border-radius:10px; padding:12px; font-size:12px; overflow:auto; max-height:280px; white-space:pre-wrap; }
+  .toast { position:fixed; top:14px; right:16px; background:#1d2634; border:1px solid var(--acc); padding:10px 16px; border-radius:10px; font-size:13px; z-index:99; opacity:0; transition:opacity .25s; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🧰 Skills 控制台</h1>
+  <div id="repoInfo"></div>
+  <div id="actions">
+    <button id="btnSync">⟳ 同步</button>
+    <button id="btnPush">⇡ 回推</button>
+    <button id="btnDoctor">🩺 体检修复</button>
+    <button id="btnRefresh">↻ 刷新状态</button>
+  </div>
+</header>
+<div class="toolbar">
+  <input id="q" placeholder="搜索名称 / 描述 / 作用 / 边界…">
+  <span class="chip on" data-f="all">全部</span>
+  <span class="chip" data-f="un">未装</span>
+  <span class="chip" data-f="in">已装</span>
+  <span class="chip" data-f="plat">平台不符</span>
+</div>
+<div id="banner"></div>
+<main id="grid"></main>
+<div id="batchbar">
+  <b id="selCount">已选 0</b>
+  <button class="primary" id="btnInstallSel">安装所选</button>
+  <button id="btnUninstallSel">卸载所选</button>
+  <button id="btnClearSel">取消选择</button>
+</div>
+<section id="log"><summary>命令输出</summary><pre id="logpre"></pre></section>
+<div class="toast" id="toast"></div>
+
+<script>
+window.__BOOT__ = /*__BOOT__*/ null;   // 本地模式由 skills.mjs 注入；GitHub Pages 上为 null
+
+const sel = new Set();
+let state = null, filter = 'all', query = '', mode = 'pages';
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => (s || '').replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); }
+function logLine(txt) { $('#logpre').textContent += txt.endsWith('\n') ? txt : txt + '\n'; $('#logpre').scrollTop = 1e9; }
+
+function api(op, payload = {}) {
+  return fetch('/api/action?t=' + window.__BOOT__.token, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ op, ...payload, names: payload.names || [] }),
+  }).then(async (r) => { const j = await r.json(); (j.out || []).forEach(logLine); if (j.state) render(j.state); if (!j.ok) toast('操作有报错，见命令输出'); return j; });
+}
+async function refreshState() {
+  const r = await fetch('/api/state?t=' + window.__BOOT__.token); render(await r.json());
+}
+
+function skillCard(s) {
+  const card = document.createElement('div');
+  card.className = 'card' + (sel.has(s.name) ? ' sel' : '');
+  const plats = ['windows','macos','linux'].map((p) =>
+    `<span class="plat${s.platforms.includes(p) ? (p === state.os ? ' hit' : '') : ' off'}" style="opacity:${s.platforms.includes(p) ? 1 : .25}">${{windows:'win',macos:'mac',linux:'lin'}[p]}</span>`).join(' ');
+  let badge = s.installed ? '<span class="badge b-ok">✔ 已装</span>' : '<span class="badge b-no">✘ 未装</span>';
+  if (!s.platformOk) badge = '<span class="badge b-na">该平台不适用</span>';
+  else if (s.realdirs && s.realdirs.length) badge = '<span class="badge b-fix">待接管(真实目录)</span>';
+  card.innerHTML = `
+    <div class="row"><span class="name">${esc(s.name)}</span>${badge}</div>
+    <div class="row">${plats}</div>
+    <div class="desc">${esc(s.description)}</div>
+    ${s.does && s.does.length ? `<ul class="does">${s.does.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}
+    ${s.boundary ? `<div class="bound">边界：${esc(s.boundary)}</div>` : ''}
+    <div class="foot"></div>`;
+  const foot = card.querySelector('.foot');
+  if (mode === 'local') {
+    if (s.platformOk) {
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = sel.has(s.name);
+      cb.onchange = () => { cb.checked ? sel.add(s.name) : sel.delete(s.name); card.classList.toggle('sel', cb.checked); updBatch(); };
+      foot.appendChild(cb);
+    }
+    const b = document.createElement('button');
+    if (s.installed) { b.textContent = '卸载'; b.onclick = () => api('remove', { names: [s.name] }); }
+    else { b.textContent = s.platformOk ? '安装' : '强制安装'; b.className = 'primary'; b.onclick = () => api('add', { names: [s.name] }); }
+    foot.appendChild(b);
+    const d = document.createElement('button'); d.textContent = '详情';
+    d.onclick = () => card.querySelector('.desc').classList.toggle('open');
+    foot.appendChild(d);
+  } else {
+    const b = document.createElement('button'); b.textContent = '复制安装命令';
+    b.onclick = () => { navigator.clipboard.writeText(`skills add ${s.name}`); toast('已复制: skills add ' + s.name); };
+    foot.appendChild(b);
+    const d = document.createElement('button'); d.textContent = '详情';
+    d.onclick = () => card.querySelector('.desc').classList.toggle('open');
+    foot.appendChild(d);
+  }
+  return card;
+}
+
+function updBatch() {
+  $('#selCount').textContent = '已选 ' + sel.size;
+  $('#batchbar').style.display = sel.size ? 'flex' : 'none';
+}
+
+function render(st) {
+  state = st;
+  const grid = $('#grid'); grid.innerHTML = '';
+  $('#repoInfo').textContent = mode === 'local'
+    ? `${st.os} · 已装 ${st.installedCount}/${st.skills.length} · git ${st.git.hasRemote ? st.git.branch + (st.git.dirty ? '(有改动⇡可回推)' : '(干净)') : '(未配远程)'} · 链接目录 ${st.linkDirs.length} 处`
+    : `${st.skills.length} 个 skill · 本页为画廊模式`;
+  const banner = $('#banner');
+  if (mode === 'local' && st.notInstalled.length) {
+    banner.style.display = 'block';
+    banner.textContent = `🆕 仓库里有 ${st.notInstalled.length} 个未安装：${st.notInstalled.join('、')} —— 勾选后点「安装所选」`;
+  } else banner.style.display = 'none';
+  let list = st.skills;
+  if (filter === 'in') list = list.filter((s) => s.installed);
+  if (filter === 'un') list = list.filter((s) => !s.installed && s.platformOk);
+  if (filter === 'plat') list = list.filter((s) => !s.platformOk);
+  if (query) list = list.filter((s) => [s.name, s.description, s.boundary, (s.does || []).join(' ')].join(' ').toLowerCase().includes(query));
+  list.forEach((s) => grid.appendChild(skillCard(s)));
+  if (!list.length) grid.innerHTML = '<p style="color:var(--dim)">没有符合条件的 skill</p>';
+  updBatch();
+}
+
+document.querySelectorAll('.chip').forEach((c) => c.onclick = () => {
+  document.querySelectorAll('.chip').forEach((x) => x.classList.remove('on'));
+  c.classList.add('on'); filter = c.dataset.f; render(state);
+});
+$('#q').oninput = (e) => { query = e.target.value.trim().toLowerCase(); render(state); };
+$('#btnRefresh').onclick = () => mode === 'local' ? refreshState() : location.reload();
+$('#btnSync').onclick = () => { logLine('— sync —'); api('sync'); };
+$('#btnDoctor').onclick = () => { logLine('— doctor --fix —'); api('doctor'); };
+$('#btnPush').onclick = () => { const msg = prompt('提交说明（可留空自动生成）', ''); if (msg !== null) { logLine('— push —'); api('push', { msg }); } };
+$('#btnInstallSel').onclick = () => { logLine('— 批量安装 —'); api('add', { names: [...sel] }).then(() => { sel.clear(); updBatch(); }); };
+$('#btnUninstallSel').onclick = () => { if (!confirm('卸载所选？（只删链接，不动仓库内容）')) return; logLine('— 批量卸载 —'); api('remove', { names: [...sel] }).then(() => { sel.clear(); updBatch(); }); };
+$('#btnClearSel').onclick = () => { sel.clear(); render(state); };
+
+(async function boot() {
+  if (window.__BOOT__ && window.__BOOT__.state) {
+    mode = 'local';
+    logLine(`[skills dashboard] ${new Date().toLocaleString()} os=${window.__BOOT__.state.os} repo=${window.__BOOT__.state.repo}`);
+    render(window.__BOOT__.state);
+  } else {
+    document.getElementById('actions').style.display = 'none';
+    document.querySelector('header h1').innerHTML = '🧰 agent-skills 画廊';
+    try {
+      const base = location.pathname.includes('/docs/') ? '' : (location.pathname.replace(/index\.html$/, '')) ;
+      const j = await fetch((base || './') + 'catalog.json');
+      const cat = await j.json();
+      render({ os: null, skills: cat.skills.map((s) => ({ ...s, installed: false, platformOk: true, realdirs: [] })), installedCount: 0, notInstalled: [], linkDirs: [], git: {} });
+      $('#repoInfo').textContent = `${cat.skills.length} 个 skill · ${new Date(cat.generatedAt).toLocaleString()} 生成 · 本机安装请用终端 skills dashboard`;
+    } catch (e) { $('#grid').innerHTML = '<p>catalog.json 加载失败：' + esc(String(e)) + '</p>'; }
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Send Feishu Doc"
+  short_description: "把摘要做成飞书文档并发送链接"
+  default_prompt: "使用 $send-feishu-doc 把这份摘要做成飞书文档并发送链接。"

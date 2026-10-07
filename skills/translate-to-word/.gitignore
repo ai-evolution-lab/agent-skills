@@ -1,0 +1,18 @@
+# Generated documents — never commit built output
+*.docx
+!examples/**/*.docx
+
+# Working directories used by the skill at runtime
+content.json
+media/
+out/
+tmp/
+.playwright-mcp/
+
+# PowerShell
+*.ps1.xml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,12 @@
+# Normalise line endings in the repository, check out native on each platform.
+* text=auto
+
+*.md    text
+*.ps1   text
+*.json  text
+
+# Images and generated documents are binary — never touch them.
+*.docx  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
