@@ -46,7 +46,7 @@ function parseSkill(dir) {
         if (v === '') meta[cur] = [];
         else if (/^\[.*\]$/.test(v)) meta[cur] = v.slice(1, -1).split(',').map((s) => s.trim()).filter(Boolean);
         else meta[cur] = v.replace(/^["'](.*)["']$/s, '$1');
-      } else if ((k = ln.match(/^-\s+(.*)$/)) && Array.isArray(meta[cur]) && cur) meta[cur].push(k[1].trim());
+      } else if ((k = ln.match(/^\s*-\s+(.*)$/)) && Array.isArray(meta[cur]) && cur) meta[cur].push(k[1].trim());
     }
   }
   meta.platforms = Array.isArray(meta.platforms) && meta.platforms.length ? meta.platforms : ['windows', 'macos', 'linux'];

@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-10-07T03:22:44.376Z",
+  "skills": [
+    {
+      "name": "send-feishu-doc",
+      "description": "Create a Feishu/Lark document from a summary, article notes, web page digest, report, or Markdown content, then send the document link through Feishu IM. Use from Codex, Cursor, Claude Code, or another Agent Skills client when the user asks to \"send as Feishu doc\", \"create a Feishu document link\", \"总结文章后发飞书文档\", \"做成飞书文档发我\", or similar workflows.",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "does": [
+        "把 Markdown 内容创建为飞书文档并设置可见权限",
+        "把文档链接发送到用户配置的飞书群"
+      ],
+      "boundary": "依赖本机 lark-cli 与用户目录下的配置文件；skill 内不硬编码任何个人 ID、群名或密钥"
+    },
+    {
+      "name": "summary",
+      "description": "总结或转录帖子、博客、网页、PDF、YouTube/视频、播客、音频和本地文件；支持登录态页面。默认只产出总结，不自动发送；如用户要求「总结并发送飞书」等端到端流程，使用 summary-to-feishu。触发词包括：总结、摘要、提炼、这篇讲什么、这个视频讲什么、转录。",
+      "platforms": [
+        "windows",
+        "macos",
+        "linux"
+      ],
+      "does": [
+        "网页 / PDF / YouTube / 播客 / 音频 / 本地文件的总结与转录",
+        "登录态页面走浏览器兜底路线",
+        "产出详细中文总结，默认不发送"
+      ],
+      "boundary": "依赖 summarize CLI（PATH 上的二进制或仓库内 pnpm 运行）；音视频转录需本机可联网"
+    },
+    {
+      "name": "summary-to-feishu",
+      "description": "端到端编排 skill——把来源(URL、网页、PDF、音视频、本地文件)做详细总结,并做成飞书文档、设置权限、把链接发到配置的飞书群。触发词包括：总结并发飞书、总结并发送、总结发到群里、详细总结发飞书、把这篇总结发到文档群。本 skill 只负责编排,总结与发送分别委托 summary 与 send-feishu-doc。",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "does": [
+        "编排「详细总结 → 飞书文档 → 发链接」一条龙流程",
+        "防止重复文档与重复消息"
+      ],
+      "boundary": "纯编排层，必须与 summary、send-feishu-doc 同装才可用；自身不生产内容"
+    },
+    {
+      "name": "translate-to-word",
+      "description": "把文章（网页 / PDF / 本地文档 / Markdown）做成「一段英文 + 一段中文」交替的中英对照 Word（.docx），并把原文的配图和图表一起嵌进文档。触发词：中英对照 word、双语 word、翻译成 word、做成 word、把文章变成 word、英文原文加中文翻译、双语对照文档、translate to word、bilingual docx、EN/ZH word。适用于网页文章、博客、论文、公众号长文、本地 PDF 或 Markdown。翻译基于全文上下文，不逐句独立翻译。",
+      "platforms": [
+        "windows",
+        "macos"
+      ],
+      "does": [
+        "网页 / PDF / 本地长文一键转成中英对照 .docx",
+        "自动抓取原文并把配图、图表嵌入文档",
+        "零依赖离线构建（PowerShell 脚本直出 OOXML）"
+      ],
+      "boundary": "产物只到 Word；macOS 需另装 pwsh 7 运行构建脚本；不做 PDF/网页排版输出"
+    },
+    {
+      "name": "wps-automation",
+      "description": "在 Windows 上用 PowerShell COM 驱动本机 WPS Office（KWPP 演示 / KWPS 文字 / KET 表格）新建、编辑、另存 pptx/docx/xlsx 并导出 PDF，支持批量转换。当用户要求做 PPT、写或改 Word、处理 Excel、生成办公文档、批量转 PDF、格式转换，或提到 WPS、pptx、docx、xlsx 的本地文件操作时使用。本机 WPS COM 不可用时降级为不启动 WPS 直接读写 OOXML 文件。",
+      "platforms": [
+        "windows"
+      ],
+      "does": [
+        "驱动本机 WPS 新建/编辑 PPT、Word、Excel 文档",
+        "另存 pptx/docx/xlsx 与批量导出 PDF",
+        "读取既有文档做内容审阅/摘要"
+      ],
+      "boundary": "仅 Windows + WPS 12.x COM；不能操作 WPS 云文档与登录态；用户开着 WPS 时避免 Quit"
+    }
+  ]
+}
