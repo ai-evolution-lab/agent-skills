@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07T03:22:44.376Z",
+  "generatedAt": "2026-10-07T07:34:08.239Z",
   "skills": [
     {
       "name": "send-feishu-doc",
@@ -58,16 +58,18 @@
     },
     {
       "name": "wps-automation",
-      "description": "在 Windows 上用 PowerShell COM 驱动本机 WPS Office（KWPP 演示 / KWPS 文字 / KET 表格）新建、编辑、另存 pptx/docx/xlsx 并导出 PDF，支持批量转换。当用户要求做 PPT、写或改 Word、处理 Excel、生成办公文档、批量转 PDF、格式转换，或提到 WPS、pptx、docx、xlsx 的本地文件操作时使用。本机 WPS COM 不可用时降级为不启动 WPS 直接读写 OOXML 文件。",
+      "description": "跨平台办公文档自动化。Windows：PowerShell COM 驱动本机 WPS Office（KWPP 演示 / KWPS 文字 / KET 表格）新建、编辑、另存 pptx/docx/xlsx 并导出 PDF，支持批量转换。macOS / Linux / 无 WPS 的机器：OOXML 直造路线（python-docx / python-pptx / openpyxl，或 zip+XML 零依赖手写）完成同样的文档生成、修改与内容读取。当用户要求做 PPT、写或改 Word、处理 Excel、生成办公文档、批量转 PDF、格式转换，或提到 WPS、pptx、docx、xlsx 的本地文件操作时使用。",
       "platforms": [
-        "windows"
+        "windows",
+        "macos",
+        "linux"
       ],
       "does": [
-        "驱动本机 WPS 新建/编辑 PPT、Word、Excel 文档",
-        "另存 pptx/docx/xlsx 与批量导出 PDF",
-        "读取既有文档做内容审阅/摘要"
+        "Windows：驱动本机 WPS 新建/编辑 PPT、Word、Excel，另存 pptx/docx/xlsx、批量导出 PDF",
+        "macOS / Linux：纯代码生成/修改/读取 pptx、docx、xlsx（OOXML 直造，零 GUI）",
+        "跨平台：既有文档内容审阅、摘要、批量文本替换"
       ],
-      "boundary": "仅 Windows + WPS 12.x COM；不能操作 WPS 云文档与登录态；用户开着 WPS 时避免 Quit"
+      "boundary": "COM 渲染级能力（套模板效果验证、图表渲染成图、重排检查）仅 Windows；Mac 的 PDF 导出依赖 LibreOffice（soffice），未装则只能交付 Office 格式；不能操作 WPS 云文档与登录态"
     }
   ]
 }
