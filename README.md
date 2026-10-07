@@ -19,6 +19,23 @@ curl -fsSL https://raw.githubusercontent.com/ai-evolution-lab/agent-skills/main/
 
 要求：`git` + `node`（脚本会检查并给出安装指引）。引导做三件事：clone 仓库到 `~/.agents/agent-skills`、注册 `skills` 命令、跑 `skills init`。
 
+## 启动可视化前端（双击即用，Win / Mac）
+
+**不用记命令**——仓库根目录自带启动脚本，双击即可：
+
+| 平台 | 双击文件 | 行为 |
+|---|---|---|
+| Windows | `start-dashboard.bat` | 弹出终端 + 自动打开浏览器控制台；**关闭窗口即退出服务** |
+| macOS / Linux | `start-dashboard.command` | Finder 双击（提示无权限时，终端执行一次 `chmod +x start-dashboard.command`） |
+
+启动脚本的小聪明：
+
+- **自动优先用本机安装真源** `~/.agents/agent-skills`——所以不管你双击的是哪个 clone 里的脚本（比如 `D:\dev\code\agent-skills` 里的工作副本），页面显示的「已装/未装」状态都是对的。
+- 本机还没安装过时，会用脚本所在仓库直接运行，页面全部显示「未装」属正常——先跑上面的 install 引导。
+- Windows 想桌面一键开：右键 `start-dashboard.bat` → 发送到 → 桌面快捷方式。
+
+终端党等价命令：`skills dashboard`（或 `node ~/.agents/agent-skills/tools/skills.mjs dashboard`）。
+
 ## 日常管理
 
 ```
